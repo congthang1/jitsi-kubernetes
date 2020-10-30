@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  namespace: jitsi
+  name: jitsi-config
+data:
+  TZ: America/Los_Angeles
+  XMPP_SERVER: shard0.yourdomain.com # << update this >>  update your main prosody XMPP domain 
+  XMPP_BOSH_URL_BASE: http://region1.yourdomain.com:5280  # << update this >>
+  DOCKER_HOST_ADDRESS: region1.yourdomain.com  # << update this >> 
+  JICOFO_COMPONENT_SECRET: your_jicofo_component_secret  # << update this >>  
+  JICOFO_AUTH_PASSWORD: your_jicofo_auth_password # << update this >>  
+  JVB_AUTH_PASSWORD: your_jvb_auth_pass  # << update this >>  
+  

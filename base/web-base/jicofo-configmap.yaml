@@ -1,0 +1,11 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  namespace: jitsi
+  name: jicofo-base
+data:
+  # custom footer that references Schul Cloud imprint and data privacy protection
+  sip-communicator.properties: |
+    org.jitsi.jicofo.ALWAYS_TRUST_MODE_ENABLED=true
+    org.jitsi.jicofo.BRIDGE_MUC=jvbbrewery@internal-muc.meet.jitsi
+    org.jitsi.jicofo.BridgeSelector.BRIDGE_SELECTION_STRATEGY=RegionBasedBridgeSelectionStrategy

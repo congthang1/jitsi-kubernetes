@@ -1,0 +1,70 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  namespace: jitsi
+  name: jvb-base
+data:
+  # custom footer that references Schul Cloud imprint and data privacy protection
+  10-config: |
+    #!/usr/bin/with-contenv bash
+
+    if [[ -z $JVB_AUTH_PASSWORD ]]; then
+        echo 'FATAL ERROR: JVB auth password must be set'
+        exit 1
+    fi
+
+    OLD_JVB_AUTH_PASSWORD=passw0rd
+    if [[ "$JVB_AUTH_PASSWORD" == "$OLD_JVB_AUTH_PASSWORD" ]]; then
+        echo 'FATAL ERROR: JVB auth password must be changed, check the README'
+        exit 1
+    fi
+
+    if [[ ! -f /config/sip-communicator.properties ]]; then
+
+        echo "SETTING JVB_PORT..."
+
+        echo "HOST NAME:" "$HOSTNAME"
+        IFS='-' read -ra ADDR <<< "$HOSTNAME"
+        let jvb_port=$((31000+${ADDR[1]}))
+        let octo_port=$((30960+${ADDR[1]}))
+        export OCTO_PULIC_BIND_PORT="$octo_port"
+        export JVB_PORT="$jvb_port"
+        export JVB_PUBLIC_IP=`(curl ifconfig.me)`
+        
+        sed -i  "s/MUC_NICKNAME={{ .Env.HOSTNAME }}/MUC_NICKNAME=$OCTO_REGION-$HOSTNAME/" /defaults/sip-communicator.properties
+        echo $JVB_PORT
+        echo "========JVB_PORT:""$JVB_PORT""=================="
+        echo "org.jitsi.videobridge.octo.BIND_ADDRESS=0.0.0.0" >> /defaults/sip-communicator.properties
+        echo "org.jitsi.videobridge.octo.PUBLIC_ADDRESS=$JVB_PUBLIC_IP" >> /defaults/sip-communicator.properties
+        echo "org.jitsi.videobridge.octo.BIND_PORT=$OCTO_PULIC_BIND_PORT" >> /defaults/sip-communicator.properties
+        echo "org.jitsi.videobridge.REGION={{ .Env.OCTO_REGION }}" >> /defaults/sip-communicator.properties
+
+        tpl /defaults/sip-communicator.properties > /config/sip-communicator.properties
+    fi
+
+    if [[ ! -f /config/logging.properties ]]; then
+        cp /defaults/logging.properties /config
+    fi
+
+    chown -R jvb:jitsi /config
+  config: |
+    # Jitsi Videobridge settings
+    # sets the XMPP domain (default: none)
+    JVB_HOSTNAME=shard0.yourdomain.com  
+    ## << update this >>
+
+    # sets the hostname of the XMPP server (default: domain if set, localhost otherwise)
+    JVB_HOST=
+
+    # sets the port of the XMPP server (default: 5275)
+    JVB_PORT=5347
+
+    # sets the shared secret used to authenticate to the XMPP server
+    JVB_SECRET=sSfsesae
+
+    # extra options to pass to the JVB daemon
+    JVB_OPTS="--apis=,"
+
+
+    # adds java system props that are passed to jvb (default are for home and logging config file)
+    JAVA_SYS_PROPS="-Dconfig.file=/etc/jitsi/videobridge/jvb.conf -Dnet.java.sip.communicator.SC_HOME_DIR_LOCATION=/etc/jitsi -Dnet.java.sip.communicator.SC_HOME_DIR_NAME=videobridge -Dnet.java.sip.communicator.SC_LOG_DIR_LOCATION=/var/log/jitsi -Djava.util.logging.config.file=/etc/jitsi/videobridge/logging.properties"

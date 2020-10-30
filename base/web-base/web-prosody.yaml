@@ -1,0 +1,102 @@
+#this script will create following deployments in a single pod.
+# 1. prosody
+# 2. jitsi web
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    k8s-app: jitsi
+  name: jitsi-web
+  namespace: jitsi
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      k8s-app: jitsi-web
+  template:
+    metadata:
+      labels:
+        k8s-app: jitsi-web
+    spec:
+      containers:
+        - name: web
+          image: jitsi/web
+          volumeMounts:
+            - mountPath: /config/config.js
+              name: web-config
+              subPath: config.js
+          imagePullPolicy: Always
+          env:
+            - name: XMPP_SERVER
+              value: meet.jitsi
+            - name: JICOFO_AUTH_USER
+              value: focus
+            - name: XMPP_DOMAIN
+              value: meet.jitsi
+            - name: XMPP_AUTH_DOMAIN
+              value: auth.meet.jitsi
+            - name: XMPP_INTERNAL_MUC_DOMAIN
+              value: internal-muc.meet.jitsi
+            - name: XMPP_BOSH_URL_BASE
+              valueFrom:
+                configMapKeyRef:
+                  name: jitsi-config
+                  key: XMPP_BOSH_URL_BASE
+            - name: XMPP_MUC_DOMAIN
+              value: muc.meet.jitsi
+            - name: TZ
+              valueFrom:
+                configMapKeyRef:
+                  name: jitsi-config
+                  key: TZ
+            - name: JVB_TCP_HARVESTER_DISABLED
+              value: "true"
+        - name: prosody
+          image: jitsi/prosody
+          imagePullPolicy: Always
+          env:
+            - name: XMPP_DOMAIN
+              value: meet.jitsi
+            - name: XMPP_AUTH_DOMAIN
+              value: auth.meet.jitsi
+            - name: XMPP_MUC_DOMAIN
+              value: muc.meet.jitsi
+            - name: XMPP_INTERNAL_MUC_DOMAIN
+              value: internal-muc.meet.jitsi
+            - name: JICOFO_COMPONENT_SECRET
+              valueFrom:
+                configMapKeyRef:
+                  name: jitsi-config
+                  key: JICOFO_COMPONENT_SECRET
+            - name: JVB_AUTH_USER
+              value: jvb
+            - name: JVB_AUTH_PASSWORD
+              valueFrom:
+                configMapKeyRef:
+                  name: jitsi-config
+                  key: JVB_AUTH_PASSWORD
+            - name: JICOFO_AUTH_USER
+              value: focus
+            - name: JICOFO_AUTH_PASSWORD
+              valueFrom:
+                configMapKeyRef:
+                  name: jitsi-config
+                  key: JICOFO_AUTH_PASSWORD
+            - name: TZ
+              valueFrom:
+                configMapKeyRef:
+                  name: jitsi-config
+                  key: TZ
+            - name: JVB_TCP_HARVESTER_DISABLED
+              value: "true"        
+      volumes:
+        - name: web-config
+          configMap:
+            name: web-shard0
+            items:
+            - key: config.js
+              path: config.js
+

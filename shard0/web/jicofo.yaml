@@ -1,0 +1,70 @@
+#this script will create following deployments in a single pod.
+# 1. jicofo
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    k8s-app: jitsi
+  name: jitsi-jicofo
+  namespace: jitsi
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      k8s-app: jitsi-jicofo
+  template:
+    metadata:
+      labels:
+        k8s-app: jitsi-jicofo
+    spec:
+      containers:
+        - name: jicofo
+          image: jitsi/jicofo
+          volumeMounts:
+          - mountPath: /defaults/sip-communicator.properties
+            name: jicofo
+            subPath: sip-communicator.properties
+          imagePullPolicy: Always
+          env:
+            - name: XMPP_SERVER
+              valueFrom:
+                configMapKeyRef:
+                  name: jitsi-config
+                  key: XMPP_SERVER
+            - name: XMPP_DOMAIN
+              value: meet.jitsi
+            - name: XMPP_AUTH_DOMAIN
+              value: auth.meet.jitsi
+            - name: XMPP_INTERNAL_MUC_DOMAIN
+              value: internal-muc.meet.jitsi
+            - name: JICOFO_COMPONENT_SECRET
+              valueFrom:
+                configMapKeyRef:
+                  name: jitsi-config
+                  key: JICOFO_COMPONENT_SECRET
+            - name: JICOFO_AUTH_USER
+              value: focus
+            - name: JICOFO_AUTH_PASSWORD
+              valueFrom:
+                configMapKeyRef:
+                  name: jitsi-config
+                  key: JICOFO_AUTH_PASSWORD
+            - name: TZ
+              valueFrom:
+                configMapKeyRef:
+                  name: jitsi-config
+                  key: TZ
+            - name: JVB_BREWERY_MUC
+              value: jvbbrewery
+      volumes:
+        - name: jicofo
+          configMap:
+            defaultMode: 0775
+            name: jicofo-base
+            items:
+              - key: sip-communicator.properties
+                path: sip-communicator.properties
+

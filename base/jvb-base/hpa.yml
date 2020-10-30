@@ -1,0 +1,15 @@
+#@author cong@cannabis.wiki
+#Horozontal pod scalar
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: jvb-pod-scaler
+  namespace : jitsi
+spec:
+  maxReplicas: 5
+  minReplicas: 1
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: StatefulSet
+    name: jvb
+  targetCPUUtilizationPercentage: 60

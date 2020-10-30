@@ -1,0 +1,87 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: jvb
+  namespace: jitsi
+spec:
+  serviceName: "jvb" #Do not use '-' in name.
+  replicas: 1
+  selector:
+    matchLabels:
+      app: jvb
+  template:
+    metadata:
+      labels:
+        app: jvb
+    spec:
+      containers:  
+        - name: jvb
+          image: jitsi/jvb:latest
+          imagePullPolicy: Always
+          resources:
+            limits:
+              cpu: "2000m"
+            requests:
+              cpu: "1200m"
+          volumeMounts:
+          - name: jvb-init
+            mountPath: /etc/cont-init.d/10-config
+            subPath: 10-config
+          - name: jvb-config
+            mountPath: /etc/jitsi/videobridge/config
+            subPath: config
+          env:
+            - name: XMPP_SERVER
+              valueFrom:
+                configMapKeyRef:
+                  name: jitsi-config
+                  key: XMPP_SERVER
+            - name: DOCKER_HOST_ADDRESS
+              valueFrom:
+                configMapKeyRef:
+                  name: jitsi-config
+                  key: DOCKER_HOST_ADDRESS
+            - name: XMPP_DOMAIN
+              value: meet.jitsi
+            - name: XMPP_AUTH_DOMAIN
+              value: auth.meet.jitsi
+            - name: XMPP_INTERNAL_MUC_DOMAIN
+              value: internal-muc.meet.jitsi
+            - name: JVB_STUN_SERVERS
+              value: stun.l.google.com:19302,stun1.l.google.com:19302,stun2.l.google.com:19302
+            - name: JICOFO_AUTH_USER
+              value: focus
+            - name: JVB_TCP_HARVESTER_DISABLED
+              value: "true"
+            - name: JVB_AUTH_USER
+              value: jvb
+            - name: JVB_ENABLE_APIS
+              value: rest,colibri
+            - name: JVB_AUTH_PASSWORD
+              valueFrom:
+                configMapKeyRef:
+                  name: jitsi-config
+                  key: JVB_AUTH_PASSWORD
+            - name: JICOFO_AUTH_PASSWORD
+              valueFrom:
+                configMapKeyRef:
+                  name: jitsi-config
+                  key: JICOFO_AUTH_PASSWORD
+            - name: JVB_BREWERY_MUC
+              value: jvbbrewery
+            - name: OCTO_REGION
+              value: tor-1 # << update this >>
+      volumes:
+      - name: jvb-config
+        configMap:
+          name: jvb-base
+          items:
+          - key: config
+            path: config
+      - name: jvb-init
+        configMap:
+          name: jvb-base
+          defaultMode: 0777
+          items:
+          - key: 10-config
+            path: 10-config

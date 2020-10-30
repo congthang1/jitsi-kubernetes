@@ -1,0 +1,39 @@
+# service for web
+apiVersion: v1
+kind: Service
+
+metadata:
+  labels:
+    service: web
+  name: web
+  namespace: jitsi
+spec:
+  type: LoadBalancer
+  ports:
+    - name: "http"
+      protocol: TCP
+      port: 80
+      nodePort: 30080
+      targetPort: 80
+    - name: "https"
+      protocol: TCP
+      port: 443
+      nodePort: 30443
+      targetPort: 80
+    - name: "muc"
+      protocol: TCP
+      port: 5347
+      nodePort: 30347
+      targetPort: 5347
+    - name: "c2s"
+      protocol: TCP
+      port: 5222
+      nodePort: 30222
+      targetPort: 5222
+    - name: "5280"
+      protocol: TCP
+      port: 5280
+      nodePort: 30280
+      targetPort: 5280
+  selector:
+    k8s-app: jitsi-web
