@@ -6,6 +6,9 @@ Kubernetes 1.18.10
 This repo is origin from https://github.com/DushmanthaBandaranayake/jitsi-kubernetes-scalable-service
 Thanks for this great work but I need to make it a different way.
 
+There are 4 parts of this deploy, each will be on a kuberenetes. Meaning you need 4 kubernetes for 2 regions or 2 kubernetes for only 1 region. The autoscale will not work if you put jvb on the same Web Prosody kubernetes.
+
+
 0. Search for all place in the code marked as: ``<< update this >> `` and update them!
 
 1. Deploy main jitsi web server on kubernetes shard 0
