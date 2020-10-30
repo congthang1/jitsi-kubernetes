@@ -11,7 +11,9 @@ JVB nodes need at least 2 cpu
 
 0. Search for all place in the code marked as: ``<< update this >> `` and update them!
 
-1. Deploy main jitsi web server on kubernetes shard 0
+1. Deploy main jitsi web server on kubernetes shard 0:
+
+    - Connect ``kubectl`` to kuberenets shard 0
 
     - Create kubernetes namespace 
     ``kubectl create namespace jitsi``
@@ -38,6 +40,8 @@ JVB nodes need at least 2 cpu
     
 2. Deploy the JVBs on kubernetes jvb-shard0
 
+    - Connect ``kubectl`` to kuberenets jvb-shard0
+
     Make sure udp port open on jvb node: udp 31000-30006 and OCTO udp port 30960 - 30966. with Digitalocean can use firewall with tag start with k8.. added by default to apply firewall to all nodes.
     
     ``kubectl create namespace jitsi``
@@ -61,6 +65,8 @@ JVB nodes need at least 2 cpu
 
 3. Deploy the second web server region on kubernetes shard1 (optional)
 
+    - Connect ``kubectl`` to kuberenets shard1
+
     - Create kubernetes namespace 
     
     ``kubectl create namespace jitsi``
@@ -82,6 +88,8 @@ JVB nodes need at least 2 cpu
     ``kubectl apply -f web-prosody.yaml``
     
 4. Deploy the JVBs on kubernetes jvb-shard1 (if you have step 3)
+
+    - Connect ``kubectl`` to kuberenets jvb-shard1
 
     Make sure udp port open on jvb node: udp 31000-30006 and OCTO udp port 30960 - 30966
     
