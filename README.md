@@ -16,9 +16,11 @@ JVB nodes need at least 2 cpu
     - Connect ``kubectl`` to kuberenets shard 0
 
     - Create kubernetes namespace 
+    
     ``kubectl create namespace jitsi``
     
     - go to /base
+
     ``kubectl apply -f config.yaml``
     
     - go to /shard0/web
