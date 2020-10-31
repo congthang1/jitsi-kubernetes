@@ -1,6 +1,6 @@
-# jitsi-kubernetes-scalable-service-with-octo
+# jitsi kubernetes scalable service with octo
 
-Kubernete deployment with autoscale JVB and OCTO enabled
+Jitsi Kubernetes deployment with autoscale JVB and OCTO enabled
 Kubernetes 1.18.10
 
 This repo is origin from https://github.com/DushmanthaBandaranayake/jitsi-kubernetes-scalable-service
@@ -114,5 +114,5 @@ JVB nodes need at least 2 cpu
     ``kubectl apply -f jvb-statefullset.yaml``
     
 
-Your scaleable jitsi with octo will be avaiable at the main domain! On digitalocean point your domain to the load balancer created on kuberenets main web and second region one. You need to set certificate there too for port 443 on setting of load balancer.
+Your scaleable jitsi with octo will be avaiable at the main domain! On Digitalocean point your domain to the load balancer created on kuberenets main web and second region one. You need to set certificate there too for port 443 on setting of load balancer.
 If you have more region just redo from step 3
