@@ -18,7 +18,7 @@ JVB nodes need at least 2 cpu (recommended 4).
 
 # Installation
 
-## 0. Search for all place in the code marked as: ``<< update this >> `` and update them!
+### 0. Search for all place in the code marked as: ``<< update this >> `` and update them!
 
 ## 1. Deploy Main Jitsi Web server on kubernetes shard 0:
 
@@ -73,6 +73,8 @@ Go to /shard0/jvb
     
     kubectl apply -f jvb-statefullset.yaml
     
+Your Jitsi meet now already available on first region. Follow next steps to add more region.
+
 
 ## 3. Deploy the second Jitsi Web server region on kubernetes shard1 (optional)
 
