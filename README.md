@@ -4,9 +4,9 @@ Jitsi Kubernetes deployment with autoscale JVB and OCTO enabled
 
 Kubernetes 1.18.10
 
-This repo is origin from https://github.com/DushmanthaBandaranayake/jitsi-kubernetes-scalable-service
+This repo is based on https://github.com/DushmanthaBandaranayake/jitsi-kubernetes-scalable-service
 
-Thanks for this great work but I need to make it a different way.
+Thanks for this great work but I need to make it a different way to enable multi shards and regional with octo.
 
 # Prequirements
 
