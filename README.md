@@ -8,10 +8,15 @@ This repo is origin from https://github.com/DushmanthaBandaranayake/jitsi-kubern
 
 Thanks for this great work but I need to make it a different way.
 
-There are 4 parts of this deploy, each will be on a kuberenetes. Meaning you need 4 kubernetes for 2 regions or 2 kubernetes for only 1 region. 
+# Prequirements
 
-The autoscale will not work if you put jvb on the same Web Prosody kubernetes.
-JVB nodes need at least 2 cpu
+You need 2 kubernetes for each region, 1 for Main Jitsi Web Prosody and 1 for JVBs. If you have 2 regions, 4 kubernertes needed.
+
+This separation make sure JVB autoscale not disturbe the Main Jitis Web as I see on Digitalocean kubernetes. 
+
+JVB nodes need at least 2 cpu (recommended 4).
+
+# Installation
 
 0. Search for all place in the code marked as: ``<< update this >> `` and update them!
 
