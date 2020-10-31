@@ -18,9 +18,9 @@ JVB nodes need at least 2 cpu (recommended 4).
 
 # Installation
 
-0. Search for all place in the code marked as: ``<< update this >> `` and update them!
+## 0. Search for all place in the code marked as: ``<< update this >> `` and update them!
 
-1. Deploy main jitsi web server on kubernetes shard 0:
+## 1. Deploy main jitsi web server on kubernetes shard 0:
 
 Connect ``kubectl`` to kuberenets shard 0
 
@@ -49,7 +49,7 @@ Go to /base/web-base
     kubectl apply -f web-prosody.yaml
     
     
-2. Deploy the JVBs on kubernetes jvb-shard0
+## 2. Deploy the JVBs on kubernetes jvb-shard0
 
 Connect ``kubectl`` to kuberenets jvb-shard0
 
@@ -74,7 +74,7 @@ Go to /shard0/jvb
     kubectl apply -f jvb-statefullset.yaml
     
 
-3. Deploy the second web server region on kubernetes shard1 (optional)
+## 3. Deploy the second web server region on kubernetes shard1 (optional)
 
 Connect ``kubectl`` to kuberenets shard1
 
@@ -98,7 +98,7 @@ Go to /base/web-base
     
     kubectl apply -f web-prosody.yaml
     
-4. Deploy the JVBs on kubernetes jvb-shard1 (if you have step 3)
+## 4. Deploy the JVBs on kubernetes jvb-shard1 (if you have step 3)
 
 Connect ``kubectl`` to kuberenets jvb-shard1
 
