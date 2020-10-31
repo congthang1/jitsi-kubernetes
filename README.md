@@ -18,7 +18,7 @@ JVB nodes need at least 2 cpu (recommended 4).
 
 # Installation
 
-### 0. Search for all place in the code marked as: ``<< update this >> `` and update them!
+### 0. Search for all places in the code marked as: ``<< update this >> `` and update them!
 
 ## 1. Deploy Main Jitsi Web server on kubernetes shard 0:
 
@@ -73,7 +73,7 @@ Go to /shard0/jvb
     
     kubectl apply -f jvb-statefullset.yaml
     
-Your Jitsi meet now already available on first region. Follow next steps to add more region.
+Your Jitsi meet now already available on first region with load balancing JVBs autoscale. Follow next steps to add more region if you have.
 
 
 ## 3. Deploy the second Jitsi Web server region on kubernetes shard1 (optional)
@@ -125,5 +125,30 @@ Go to /shard1/jvb
     kubectl apply -f jvb-statefullset.yaml
     
 
-Your scaleable jitsi with octo will be avaiable at the main domain! On Digitalocean point your domain to the load balancer created on kuberenets main web and second region one. You need to set certificate there too for port 443 on setting of load balancer.
-If you have more region just redo from step 3
+Your scaleable jitsi with octo will be avaiable at the main domain! 
+
+On Digitalocean point your domain to the load balancer created on kuberenets main web and second region one. 
+
+You can use route53 with regional routing support, this will select best domain for user. Just point 1 domain to both Jitsi Web loadbalancer.
+
+You need to set ssl certificate there too for port 443 on setting of load balancer.
+
+If you have more region just clone ``/shard1`` to ``/shard2``, update the region on 2 places:
+
+* For Jitsi web:
+
+    /shard2/web-configmap.yaml
+    
+Find this and update
+
+    deploymentInfo: {
+        shard: "shard1",
+        region: "tor-1",
+        userRegion: "tor-1"
+    }
+* For JVBs:
+
+    /shard2/jvb-statefullset.yaml
+Update `OCTO_REGION`
+
+Then redo from step 3.
