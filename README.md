@@ -152,3 +152,7 @@ Find this and update
 Update `OCTO_REGION`
 
 Then redo from step 3.
+
+## Testing
+Please refer to this testing using this configuration:
+https://community.jitsi.org/t/jitsi-jvb-2-performance-2020-testing/83672
