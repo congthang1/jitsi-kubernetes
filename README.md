@@ -61,7 +61,7 @@ Go to /base
     
     kubectl apply -f config.yaml
     
-Go to /jvb-base
+Go to /base/jvb-base
     
     kubectl apply -f server_metrics.yaml
     
