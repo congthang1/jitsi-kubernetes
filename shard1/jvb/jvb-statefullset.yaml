@@ -16,7 +16,7 @@ spec:
     spec:
       containers:  
         - name: jvb
-          image: jitsi/jvb:latest
+          image: jitsi/jvb:stable-5142
           imagePullPolicy: Always
           resources:
             limits:
