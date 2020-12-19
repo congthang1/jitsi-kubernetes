@@ -4,9 +4,9 @@ Jitsi Kubernetes deployment with autoscale JVB and OCTO enabled
 
 Kubernetes 1.18.10
 
-This repo is origin from https://github.com/DushmanthaBandaranayake/jitsi-kubernetes-scalable-service
+This repo is based on https://github.com/DushmanthaBandaranayake/jitsi-kubernetes-scalable-service
 
-Thanks for this great work but I need to make it a different way.
+Thanks for this great work but I need to make it a different way to enable multi shards and regional with octo.
 
 # Prequirements
 
@@ -61,7 +61,7 @@ Go to /base
     
     kubectl apply -f config.yaml
     
-Go to /jvb-base
+Go to /base/jvb-base
     
     kubectl apply -f server_metrics.yaml
     
@@ -152,3 +152,7 @@ Find this and update
 Update `OCTO_REGION`
 
 Then redo from step 3.
+
+## Testing
+Please refer to this testing using this configuration:
+https://community.jitsi.org/t/jitsi-jvb-2-performance-2020-testing/83672
