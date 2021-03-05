@@ -1,4 +1,4 @@
-# jitsi-kubernetes-scalable-service-with-octo
+# jitsi kubernetes scalable service multi shards with OCTO
 
 Kubernete deployment with autoscale JVB and OCTO enabled
 Kubernetes 1.18.10
