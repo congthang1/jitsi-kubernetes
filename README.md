@@ -1,10 +1,7 @@
-# jitsi-kubernetes-scalable-service-with-octo
+# jitsi kubernetes scalable service multi shards with OCTO
 
 Kubernete deployment with autoscale JVB and OCTO enabled
 Kubernetes 1.18.10
-
-This repo is origin from https://github.com/DushmanthaBandaranayake/jitsi-kubernetes-scalable-service
-Thanks for this great work but I need to make it a different way.
 
 There are 4 parts of this deploy, each will be on a kuberenetes. Meaning you need 4 kubernetes for 2 regions or 2 kubernetes for only 1 region. The autoscale will not work if you put jvb on the same Web Prosody kubernetes.
 JVB nodes need at least 2 cpu
