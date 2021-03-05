@@ -1,12 +1,14 @@
+# @author dushmanthab99@gmail.com
 # service for web
 apiVersion: v1
 kind: Service
-
 metadata:
   labels:
     service: web
   name: web
   namespace: jitsi
+  annotations:
+    #service.beta.kubernetes.io/do-loadbalancer-certificate-id: 
 spec:
   type: LoadBalancer
   ports:
@@ -19,6 +21,11 @@ spec:
       protocol: TCP
       port: 443
       nodePort: 30443
+      targetPort: 80
+    - name: "ws"
+      protocol: TCP
+      port: 8443
+      nodePort: 30843
       targetPort: 80
     - name: "muc"
       protocol: TCP

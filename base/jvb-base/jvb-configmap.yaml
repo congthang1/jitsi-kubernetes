@@ -5,6 +5,49 @@ metadata:
   name: jvb-base
 data:
   # custom footer that references Schul Cloud imprint and data privacy protection
+  sip-communicator.properties: |
+    org.jitsi.videobridge.SINGLE_PORT_HARVESTER_PORT={{ .Env.JVB_PORT }}
+    org.jitsi.videobridge.DISABLE_TCP_HARVESTER={{ .Env.JVB_TCP_HARVESTER_DISABLED }}
+    org.jitsi.videobridge.TCP_HARVESTER_PORT={{ .Env.JVB_TCP_PORT }}
+    {{ if .Env.JVB_STUN_SERVERS }}
+      org.ice4j.ice.harvest.STUN_MAPPING_HARVESTER_ADDRESSES={{ .Env.JVB_STUN_SERVERS }}
+    {{ end }}
+    {{ if .Env.DOCKER_HOST_ADDRESS }}
+      org.ice4j.ice.harvest.NAT_HARVESTER_LOCAL_ADDRESS={{ .Env.LOCAL_ADDRESS }}
+      org.ice4j.ice.harvest.NAT_HARVESTER_PUBLIC_ADDRESS={{ .Env.DOCKER_HOST_ADDRESS }}
+    {{ end }}
+    {{ $JVB_TCP_PORT := .Env.JVB_TCP_PORT | default "4443" }}
+    {{ $JVB_TCP_MAPPED_PORT := .Env.JVB_TCP_MAPPED_PORT | default $JVB_TCP_PORT }}
+    {{ if not (eq $JVB_TCP_PORT $JVB_TCP_MAPPED_PORT) }}
+    org.jitsi.videobridge.TCP_HARVESTER_MAPPED_PORT={{ $JVB_TCP_MAPPED_PORT }}
+    {{ end }}
+
+    org.jitsi.videobridge.xmpp.user.shard.HOSTNAME={{ .Env.XMPP_SERVER }}
+    org.jitsi.videobridge.xmpp.user.shard.DOMAIN={{ .Env.XMPP_AUTH_DOMAIN }}
+    org.jitsi.videobridge.xmpp.user.shard.USERNAME={{ .Env.JVB_AUTH_USER }}
+    org.jitsi.videobridge.xmpp.user.shard.PASSWORD={{ .Env.JVB_AUTH_PASSWORD }}
+    org.jitsi.videobridge.xmpp.user.shard.MUC_JIDS={{ .Env.JVB_BREWERY_MUC }}@{{ .Env.XMPP_INTERNAL_MUC_DOMAIN }}
+    org.jitsi.videobridge.xmpp.user.shard.MUC_NICKNAME={{ .Env.HOSTNAME }}
+    org.jitsi.videobridge.xmpp.user.shard.DISABLE_CERTIFICATE_VERIFICATION=true
+
+    org.jitsi.videobridge.ENABLE_STATISTICS=true
+    org.jitsi.videobridge.STATISTICS_TRANSPORT=muc
+    org.jitsi.videobridge.STATISTICS_INTERVAL=5000
+
+    {{ $PUBLIC_URL_DOMAIN := .Env.PUBLIC_URL | default "https://localhost:8443" | trimPrefix "https://" | trimSuffix "/" -}}
+    {{ $WS_DOMAIN := .Env.JVB_WS_DOMAIN | default $PUBLIC_URL_DOMAIN -}}
+    {{ $WS_SERVER_ID := .Env.JVB_WS_SERVER_ID | default .Env.LOCAL_ADDRESS -}}
+
+    org.jitsi.videobridge.rest.COLIBRI_WS_DISABLE=false
+    org.jitsi.videobridge.rest.jetty.port=9090
+    org.jitsi.videobridge.rest.COLIBRI_WS_DOMAIN={{ $WS_DOMAIN }}
+    org.jitsi.videobridge.rest.COLIBRI_WS_TLS=true
+    org.jitsi.videobridge.rest.COLIBRI_WS_SERVER_ID={{ $WS_SERVER_ID }}
+
+    org.jitsi.videobridge.rest.private.jetty.host=0.0.0.0
+    org.jitsi.videobridge.octo.BIND_ADDRESS=0.0.0.0
+    org.jitsi.videobridge.REGION={{ .Env.OCTO_REGION }}
+
   10-config: |
     #!/usr/bin/with-contenv bash
 
@@ -19,7 +62,7 @@ data:
         exit 1
     fi
 
-    if [[ ! -f /config/sip-communicator.properties ]]; then
+    #if [[ ! -f /config/sip-communicator.properties ]]; then
 
         echo "SETTING JVB_PORT..."
 
@@ -27,31 +70,35 @@ data:
         IFS='-' read -ra ADDR <<< "$HOSTNAME"
         let jvb_port=$((31000+${ADDR[1]}))
         let octo_port=$((30960+${ADDR[1]}))
+        let jetty_port=$((30900+${ADDR[1]}))
         export OCTO_PULIC_BIND_PORT="$octo_port"
         export JVB_PORT="$jvb_port"
         export JVB_PUBLIC_IP=`(curl ifconfig.me)`
         
         sed -i  "s/MUC_NICKNAME={{ .Env.HOSTNAME }}/MUC_NICKNAME=$OCTO_REGION-$HOSTNAME/" /defaults/sip-communicator.properties
+        sed -i  "s/NAT_HARVESTER_LOCAL_ADDRESS={{ .Env.LOCAL_ADDRESS }}/NAT_HARVESTER_LOCAL_ADDRESS=$JVB_PUBLIC_IP/" /defaults/sip-communicator.properties
+        sed -i  "s/COLIBRI_WS_SERVER_ID={{ \$WS_SERVER_ID }}/COLIBRI_WS_SERVER_ID=$JVB_PUBLIC_IP:$jetty_port/" /defaults/sip-communicator.properties
+        sed -i  "s/org.jitsi.videobridge.rest.jetty.port=9090/org.jitsi.videobridge.rest.jetty.port=$jetty_port/" /defaults/sip-communicator.properties
+        
         echo $JVB_PORT
         echo "========JVB_PORT:""$JVB_PORT""=================="
-        echo "org.jitsi.videobridge.octo.BIND_ADDRESS=0.0.0.0" >> /defaults/sip-communicator.properties
         echo "org.jitsi.videobridge.octo.PUBLIC_ADDRESS=$JVB_PUBLIC_IP" >> /defaults/sip-communicator.properties
         echo "org.jitsi.videobridge.octo.BIND_PORT=$OCTO_PULIC_BIND_PORT" >> /defaults/sip-communicator.properties
-        echo "org.jitsi.videobridge.REGION={{ .Env.OCTO_REGION }}" >> /defaults/sip-communicator.properties
 
         tpl /defaults/sip-communicator.properties > /config/sip-communicator.properties
-    fi
+    #fi
 
     if [[ ! -f /config/logging.properties ]]; then
         cp /defaults/logging.properties /config
     fi
-
+  
+    sed -i  "s/port = 9090/port = $jetty_port/" /etc/jitsi/videobridge/jvb.conf
     chown -R jvb:jitsi /config
+    cp /etc/jitsi/videobridge/jvb.conf /config/
   config: |
     # Jitsi Videobridge settings
-    # sets the XMPP domain (default: none)
-    JVB_HOSTNAME=shard0.yourdomain.com  
-    ## << update this >>
+    # sets the XMPP domain (default: none) << update this >> use your xmpp_server
+    JVB_HOSTNAME=  
 
     # sets the hostname of the XMPP server (default: domain if set, localhost otherwise)
     JVB_HOST=
@@ -60,7 +107,7 @@ data:
     JVB_PORT=5347
 
     # sets the shared secret used to authenticate to the XMPP server
-    JVB_SECRET=sSfsesae
+    JVB_SECRET=bSp2WL0R
 
     # extra options to pass to the JVB daemon
     JVB_OPTS="--apis=,"

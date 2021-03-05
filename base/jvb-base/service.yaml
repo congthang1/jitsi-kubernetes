@@ -1,6 +1,6 @@
 # service for jvbs
 # create service for jvb upd access on kubernetes Nodeport starting with 31000.
-# Make sure NodePorts between 31000-31005 are available on your kube cluster.
+# Make sure NodePorts between 31000-31011 are available on your kube cluster.
 # update this if you need JVBs more than 6.
 # JVB-0
 apiVersion: v1
@@ -20,10 +20,15 @@ spec:
       targetPort: 31000
       nodePort: 31000
     - port: 30960
-      name: jvb-octo-0
+      name: octo-0
       protocol: UDP
       targetPort: 30960
       nodePort: 30960
+    - port: 9090
+      name: colibri-ws-0
+      protocol: TCP
+      targetPort: 30900
+      nodePort: 30900
   selector:
     app: jvb
     "statefulset.kubernetes.io/pod-name": jvb-0
@@ -46,10 +51,15 @@ spec:
       targetPort: 31001
       nodePort: 31001
     - port: 30961
-      name: jvb-octo-1
+      name: octo-jvb-1
       protocol: UDP
       targetPort: 30961
       nodePort: 30961
+    - port: 9091
+      name: colibri-ws-jvb-1
+      protocol: TCP
+      targetPort: 30901
+      nodePort: 30901
   selector:
     app: jvb
     "statefulset.kubernetes.io/pod-name": jvb-1
@@ -72,10 +82,15 @@ spec:
       targetPort: 31002
       nodePort: 31002
     - port: 30962
-      name: jvb-octo-2
+      name: octo-jvb-2
       protocol: UDP
       targetPort: 30962
-      nodePort: 30962  
+      nodePort: 30962 
+    - port: 9092
+      name: colibri-ws-jvb-2
+      protocol: TCP
+      targetPort: 30902
+      nodePort: 30902
   selector:
     app: jvb
     "statefulset.kubernetes.io/pod-name": jvb-2
@@ -98,10 +113,15 @@ spec:
       targetPort: 31003
       nodePort: 31003
     - port: 30963
-      name: jvb-octo-3
+      name: octo-jvb-3
       protocol: UDP
       targetPort: 30963
       nodePort: 30963
+    - port: 9093
+      name: colibri-ws-jvb-3
+      protocol: TCP
+      targetPort: 30903
+      nodePort: 30903
   selector:
     app: jvb
     "statefulset.kubernetes.io/pod-name": jvb-3
@@ -124,10 +144,15 @@ spec:
       targetPort: 31004
       nodePort: 31004
     - port: 30964
-      name: jvb-octo-4
+      name: octo-jvb-4
       protocol: UDP
       targetPort: 30964
       nodePort: 30964
+    - port: 9094
+      name: colibri-ws-jvb-4
+      protocol: TCP
+      targetPort: 30904
+      nodePort: 30904
   selector:
     app: jvb
     "statefulset.kubernetes.io/pod-name":  jvb-4
@@ -150,10 +175,15 @@ spec:
       targetPort: 31005
       nodePort: 31005
     - port: 30965
-      name: jvb-octo-5
+      name: octo-jvb-5
       protocol: UDP
       targetPort: 30965
       nodePort: 30965
+    - port: 9095
+      name: colibri-ws-jvb-5
+      protocol: TCP
+      targetPort: 30905
+      nodePort: 30905
   selector:
     app: jvb
     "statefulset.kubernetes.io/pod-name":  jvb-5
@@ -176,10 +206,170 @@ spec:
       targetPort: 31006
       nodePort: 31006
     - port: 30966
-      name: jvb-octo-6
+      name: octo-jvb-6
       protocol: UDP
       targetPort: 30966
       nodePort: 30966
+    - port: 9096
+      name: colibri-ws-jvb-6
+      protocol: TCP
+      targetPort: 30906
+      nodePort: 30906
   selector:
     app: jvb
     "statefulset.kubernetes.io/pod-name":  jvb-6
+---
+#JVB-7
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    service: jvb-7
+  name:  jvb-7
+  namespace: jitsi
+spec:
+  type: NodePort
+  externalTrafficPolicy: Local
+  ports:
+    - port: 31007
+      name:  jvb-7
+      protocol: UDP
+      targetPort: 31007
+      nodePort: 31007
+    - port: 30967
+      name: octo-jvb-7
+      protocol: UDP
+      targetPort: 30967
+      nodePort: 30967
+    - port: 9097
+      name: colibri-ws-jvb-7
+      protocol: TCP
+      targetPort: 30907
+      nodePort: 30907
+  selector:
+    app: jvb
+    "statefulset.kubernetes.io/pod-name":  jvb-7
+---
+#JVB-8
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    service: jvb-8
+  name:  jvb-8
+  namespace: jitsi
+spec:
+  type: NodePort
+  externalTrafficPolicy: Local
+  ports:
+    - port: 31008
+      name:  jvb-8
+      protocol: UDP
+      targetPort: 31008
+      nodePort: 31008
+    - port: 30968
+      name: octo-jvb-8
+      protocol: UDP
+      targetPort: 30968
+      nodePort: 30968
+    - port: 9098
+      name: colibri-ws-jvb-8
+      protocol: TCP
+      targetPort: 30908
+      nodePort: 30908
+  selector:
+    app: jvb
+    "statefulset.kubernetes.io/pod-name":  jvb-8
+---
+#JVB-9
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    service: jvb-9
+  name:  jvb-9
+  namespace: jitsi
+spec:
+  type: NodePort
+  externalTrafficPolicy: Local
+  ports:
+    - port: 31009
+      name:  jvb-9
+      protocol: UDP
+      targetPort: 31009
+      nodePort: 31009
+    - port: 30969
+      name: octo-jvb-9
+      protocol: UDP
+      targetPort: 30969
+      nodePort: 30969
+    - port: 9099
+      name: colibri-ws-jvb-9
+      protocol: TCP
+      targetPort: 30909
+      nodePort: 30909
+  selector:
+    app: jvb
+    "statefulset.kubernetes.io/pod-name":  jvb-9
+---
+#JVB-10
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    service: jvb-10
+  name:  jvb-10
+  namespace: jitsi
+spec:
+  type: NodePort
+  externalTrafficPolicy: Local
+  ports:
+    - port: 31010
+      name:  jvb-10
+      protocol: UDP
+      targetPort: 31010
+      nodePort: 31010
+    - port: 30970
+      name: octo-jvb-10
+      protocol: UDP
+      targetPort: 30970
+      nodePort: 30970
+    - port: 9100
+      name: colibri-ws-jvb-10
+      protocol: TCP
+      targetPort: 30910
+      nodePort: 30910
+  selector:
+    app: jvb
+    "statefulset.kubernetes.io/pod-name":  jvb-10 
+---
+#JVB-11
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    service: jvb-11
+  name:  jvb-11
+  namespace: jitsi
+spec:
+  type: NodePort
+  externalTrafficPolicy: Local
+  ports:
+    - port: 31011
+      name:  jvb-11
+      protocol: UDP
+      targetPort: 31011
+      nodePort: 31011
+    - port: 30971
+      name: octo-jvb-11
+      protocol: UDP
+      targetPort: 30971
+      nodePort: 30971
+    - port: 9101
+      name: colibri-ws-jvb-11
+      protocol: TCP
+      targetPort: 30911
+      nodePort: 30911
+  selector:
+    app: jvb
+    "statefulset.kubernetes.io/pod-name":  jvb-11

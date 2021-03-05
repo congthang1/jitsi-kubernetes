@@ -16,20 +16,23 @@ spec:
     spec:
       containers:  
         - name: jvb
-          image: jitsi/jvb:stable-5142
+          image: jitsi/jvb:stable-5390-3
           imagePullPolicy: Always
-          resources:
-            limits:
-              cpu: "2000m"
-            requests:
-              cpu: "1200m"
+          # resources:
+          #   limits:
+          #     cpu: "4000m"
+          #   requests:
+          #     cpu: "3000m"
           volumeMounts:
-          - name: jvb-init
+          - name: jvb-config
             mountPath: /etc/cont-init.d/10-config
             subPath: 10-config
           - name: jvb-config
             mountPath: /etc/jitsi/videobridge/config
             subPath: config
+          - name: jvb-config
+            mountPath: /defaults/sip-communicator.properties
+            subPath: sip-communicator.properties
           env:
             - name: XMPP_SERVER
               valueFrom:
@@ -41,6 +44,11 @@ spec:
                 configMapKeyRef:
                   name: jitsi-config
                   key: DOCKER_HOST_ADDRESS
+            - name: PUBLIC_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: jitsi-config
+                  key: PUBLIC_URL
             - name: XMPP_DOMAIN
               value: meet.jitsi
             - name: XMPP_AUTH_DOMAIN
@@ -70,18 +78,19 @@ spec:
             - name: JVB_BREWERY_MUC
               value: jvbbrewery
             - name: OCTO_REGION
-              value: tor-1 # << update this >>
+              valueFrom:
+                configMapKeyRef:
+                  name: web-shard-config
+                  key: OCTO_REGION
       volumes:
       - name: jvb-config
         configMap:
           name: jvb-base
+          defaultMode: 0777
           items:
           - key: config
             path: config
-      - name: jvb-init
-        configMap:
-          name: jvb-base
-          defaultMode: 0777
-          items:
           - key: 10-config
             path: 10-config
+          - key: sip-communicator.properties
+            path: sip-communicator.properties

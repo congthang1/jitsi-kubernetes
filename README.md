@@ -1,158 +1,30 @@
-# jitsi kubernetes scalable service with octo
+# jitsi-kubernetes-scalable-service-with-octo
 
-Jitsi Kubernetes deployment with autoscale JVB and OCTO enabled
-
+Kubernete deployment with autoscale JVB and OCTO enabled
 Kubernetes 1.18.10
 
-This repo is based on https://github.com/DushmanthaBandaranayake/jitsi-kubernetes-scalable-service
+This repo is origin from https://github.com/DushmanthaBandaranayake/jitsi-kubernetes-scalable-service
+Thanks for this great work but I need to make it a different way.
 
-Thanks for this great work but I need to make it a different way to enable multi shards and regional with octo.
+There are 4 parts of this deploy, each will be on a kuberenetes. Meaning you need 4 kubernetes for 2 regions or 2 kubernetes for only 1 region. The autoscale will not work if you put jvb on the same Web Prosody kubernetes.
+JVB nodes need at least 2 cpu
 
-# Prequirements
+0. Search for all place in the code marked as: ``<< update this >> `` and update them! 
 
-You need 2 kubernetes for each region, 1 for Main Jitsi Web Prosody and 1 for JVBs. If you have 2 regions, 4 kubernertes needed.
+Make sure you have save your context connection to your kubernetes cluster on cloud.
 
-This separation make sure JVB autoscale not disturbe the Main Jitis Web as I see on Digitalocean kubernetes. 
+1. Deploy main jitsi web server on kubernetes shard 0:
 
-JVB nodes need at least 2 cpu (recommended 4).
+    ``./deploy-shard0.sh``
 
-# Installation
+2. Deploy the second web server region on kubernetes shard1 (optional)
 
-### 0. Search for all places in the code marked as: ``<< update this >> `` and update them!
+    ``./deploy-shard1.sh``
 
-## 1. Deploy Main Jitsi Web server on kubernetes shard 0:
+3. Deploy the second web server region on kubernetes shard1 (optional)
 
-Connect ``kubectl`` to kuberenets shard 0
-
-Create kubernetes namespace 
-    
-    kubectl create namespace jitsi
-    
-Go to /base
-
-    kubectl apply -f config.yaml
-    
-Go to /shard0/web
-    
-    kubectl apply -f jicofo.yaml
-    
-    kubectl apply -f web-configmap.yaml
-    
-Go to /base/web-base
-    
-    kubectl apply -f web-configmap.yaml
-    
-    kubectl apply -f jicofo-configmap.yaml
-    
-    kubectl apply -f service.yaml
-    
-    kubectl apply -f web-prosody.yaml
-    
-    
-## 2. Deploy the JVBs on kubernetes jvb-shard0
-
-Connect ``kubectl`` to kuberenets jvb-shard0
-
-Make sure udp port open on jvb node: udp 31000-30006 and OCTO udp port 30960 - 30966. with Digitalocean can use firewall with tag start with k8.. added by default to apply firewall to all nodes.
-    
-    kubectl create namespace jitsi
-    
-Go to /base
-    
-    kubectl apply -f config.yaml
-    
-Go to /base/jvb-base
-    
-    kubectl apply -f server_metrics.yaml
-    
-    kubectl apply -f jvb-configmap.yaml
-    
-    kubectl apply -f service.yaml
-    
-Go to /shard0/jvb
-    
-    kubectl apply -f jvb-statefullset.yaml
-    
-Your Jitsi meet now already available on first region with load balancing JVBs autoscale. Follow next steps to add more region if you have.
-
-
-## 3. Deploy the second Jitsi Web server region on kubernetes shard1 (optional)
-
-Connect ``kubectl`` to kuberenets shard1
-
-Create kubernetes namespace 
-    
-    kubectl create namespace jitsi
-    
-Go to /base
-    
-    kubectl apply -f config.yaml
-    
-Go to /shard1/web
-    
-    kubectl apply -f web-configmap.yaml
-    
-Go to /base/web-base
-    
-    kubectl apply -f web-configmap.yaml
-    
-    kubectl apply -f service.yaml
-    
-    kubectl apply -f web-prosody.yaml
-    
-## 4. Deploy the second JVBs on kubernetes jvb-shard1 for second region (if you have step 3)
-
-Connect ``kubectl`` to kuberenets jvb-shard1
-
-Make sure udp port open on jvb node: udp 31000-30006 and OCTO udp port 30960 - 30966
-    
-    kubectl create namespace jitsi
-    
-Go to /base
-    
-    kubectl apply -f config.yaml
-    
-Go to /jvb-base
-    
-    kubectl apply -f server_metrics.yaml
-    
-    kubectl apply -f jvb-configmap.yaml
-    
-    kubectl apply -f service.yaml
-    
-Go to /shard1/jvb
-    
-    kubectl apply -f jvb-statefullset.yaml
+    ``./deploy-shard2.sh``
     
 
-Your scaleable jitsi with octo will be avaiable at the main domain! 
-
-On Digitalocean point your domain to the load balancer created on kuberenets main web and second region one. 
-
-You can use route53 with regional routing support, this will select best domain for user. Just point 1 domain to both Jitsi Web loadbalancer.
-
-You need to set ssl certificate there too for port 443 on setting of load balancer.
-
-If you have more region just clone ``/shard1`` to ``/shard2``, update the region on 2 places:
-
-* For Jitsi web:
-
-    /shard2/web-configmap.yaml
-    
-Find this and update
-
-    deploymentInfo: {
-        shard: "shard1",
-        region: "tor-1",
-        userRegion: "tor-1"
-    }
-* For JVBs:
-
-    /shard2/jvb-statefullset.yaml
-Update `OCTO_REGION`
-
-Then redo from step 3.
-
-## Testing
-Please refer to this testing using this configuration:
-https://community.jitsi.org/t/jitsi-jvb-2-performance-2020-testing/83672
+Your scaleable jitsi with octo will be avaiable at the main domain! On digitalocean point your domain to the load balancer created on kuberenets main web and second region one. You need to set certificate there too for port 443 on setting of load balancer.
+If you have more region just redo from step 3

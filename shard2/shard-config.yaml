@@ -1,0 +1,10 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  namespace: jitsi
+  name: web-shard-config
+data:
+  # custom footer that references Schul Cloud imprint and data privacy protection
+   SHARD_NAME: "shard2"
+   OCTO_REGION: "sg-1"
+   USER_REGION: "sg-1"

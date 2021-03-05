@@ -22,7 +22,7 @@ spec:
     spec:
       containers:
         - name: jicofo
-          image: jitsi/jicofo
+          image: jitsi/jicofo:stable-5142
           volumeMounts:
           - mountPath: /defaults/sip-communicator.properties
             name: jicofo

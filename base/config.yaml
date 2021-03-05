@@ -1,14 +1,24 @@
 apiVersion: v1
+kind: Namespace
+metadata:
+  name: jitsi
+  labels:
+    name: jitsi
+---
+apiVersion: v1
 kind: ConfigMap
 metadata:
   namespace: jitsi
   name: jitsi-config
 data:
   TZ: America/Los_Angeles
-  XMPP_SERVER: shard0.yourdomain.com # << update this >>  update your main prosody XMPP domain 
-  XMPP_BOSH_URL_BASE: http://shard0.yourdomain.com:5280  # << update this >>
-  DOCKER_HOST_ADDRESS: shard0.yourdomain.com  # << update this >> 
-  JICOFO_COMPONENT_SECRET: your_jicofo_component_secret  # << update this >>  
-  JICOFO_AUTH_PASSWORD: your_jicofo_auth_password # << update this >>  
-  JVB_AUTH_PASSWORD: your_jvb_auth_pass  # << update this >>  
-  
+  XMPP_SERVER: yourshard0domain.com
+  PUBLIC_URL: https://yourshard0domain.com
+  XMPP_BOSH_URL_BASE: http://yourshard0domain.com:5280
+  DOCKER_HOST_ADDRESS: yourshard0domain.com
+  JICOFO_COMPONENT_SECRET: yoursecret-base64
+  JVB_AUTH_PASSWORD: yoursecret-base64
+  JICOFO_AUTH_PASSWORD: yoursecret-base64
+  JWT_APP_ID: your_App_id
+  JWT_APP_SECRET: yoursecret
+  JWT_ACCEPTED_ISSUERS: my_web_client,my_app_client

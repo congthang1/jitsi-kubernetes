@@ -1,3 +1,4 @@
+#author : Cong cong@cannabis.wiki
 #this script will create following deployments in a single pod.
 # 1. prosody
 # 2. jitsi web
@@ -23,11 +24,20 @@ spec:
     spec:
       containers:
         - name: web
-          image: jitsi/web:stable-5142
+          image: jitsi/web:stable-5390-3
           volumeMounts:
-            - mountPath: /config/config.js
+            - mountPath: /defaults/config.js
               name: web-config
               subPath: config.js
+            - mountPath: /defaults/interface_config.js
+              name: web-config
+              subPath: interface_config.js
+            - mountPath: /etc/cont-init.d/10-config
+              name: web-config
+              subPath: 10-config
+            - mountPath: /defaults/meet.conf
+              name: web-config
+              subPath: meet.conf
           imagePullPolicy: Always
           env:
             - name: XMPP_SERVER
@@ -40,6 +50,11 @@ spec:
               value: auth.meet.jitsi
             - name: XMPP_INTERNAL_MUC_DOMAIN
               value: internal-muc.meet.jitsi
+            - name: PUBLIC_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: jitsi-config
+                  key: PUBLIC_URL
             - name: XMPP_BOSH_URL_BASE
               valueFrom:
                 configMapKeyRef:
@@ -54,9 +69,35 @@ spec:
                   key: TZ
             - name: JVB_TCP_HARVESTER_DISABLED
               value: "true"
+            - name: SHARD_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: web-shard-config
+                  key: SHARD_NAME
+            - name: OCTO_REGION
+              valueFrom:
+                configMapKeyRef:
+                  name: web-shard-config
+                  key: OCTO_REGION
+            - name: USER_REGION
+              valueFrom:
+                configMapKeyRef:
+                  name: web-shard-config
+                  key: USER_REGION
+            - name: TESTING_OCTO_PROBABILITY
+              value: "1"
+            - name: START_AUDIO_MUTED
+              value: "4"
         - name: prosody
-          image: jitsi/prosody
+          image: jitsi/prosody:stable-5390-3
           imagePullPolicy: Always
+          volumeMounts:
+            - mountPath: /prosody-plugins-custom/mod_token_moderation.lua
+              name: web-config
+              subPath: mod_token_moderation.lua
+            - mountPath: /defaults/conf.d/jitsi-meet.cfg.lua
+              name: web-config
+              subPath: jitsi-meet.cfg.lua
           env:
             - name: XMPP_DOMAIN
               value: meet.jitsi
@@ -90,13 +131,57 @@ spec:
                 configMapKeyRef:
                   name: jitsi-config
                   key: TZ
+            - name: JWT_APP_ID
+              valueFrom:
+                configMapKeyRef:
+                  name: jitsi-config
+                  key: JWT_APP_ID
+            - name: JWT_APP_SECRET
+              valueFrom:
+                configMapKeyRef:
+                  name: jitsi-config
+                  key: JWT_APP_SECRET
+            - name: JWT_ACCEPTED_ISSUERS
+              valueFrom:
+                configMapKeyRef:
+                  name: jitsi-config
+                  key: JWT_ACCEPTED_ISSUERS
+            - name: PUBLIC_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: jitsi-config
+                  key: PUBLIC_URL
             - name: JVB_TCP_HARVESTER_DISABLED
-              value: "true"        
+              value: "true"
+            - name: ENABLE_AUTH
+              value: "1"
+            - name: ENABLE_GUESTS
+              value: "true"
+            - name: AUTH_TYPE
+              value: jwt
+            - name: JWT_ALLOW_EMPTY
+              value: "0"
+            - name: JWT_AUTH_TYPE
+              value: token
+            - name: JWT_TOKEN_AUTH_MODULE
+              value: token_verification
+            - name: ENABLE_XMPP_WEBSOCKET
+              value: "1"
       volumes:
         - name: web-config
           configMap:
-            name: web-shard0
+            name: web-base
+            defaultMode: 0777
             items:
-            - key: config.js
-              path: config.js
-
+              - key: config.js
+                path: config.js
+              - key: interface_config.js
+                path: interface_config.js
+              - key: 10-config
+                path: 10-config
+              - key: meet.conf
+                path: meet.conf
+              - key: mod_token_moderation.lua
+                path: mod_token_moderation.lua
+              - key: jitsi-meet.cfg.lua
+                path: jitsi-meet.cfg.lua
