@@ -11,14 +11,14 @@ metadata:
   namespace: jitsi
   name: jitsi-config
 data:
-  TZ: America/Los_Angeles
-  XMPP_SERVER: yourshard0domain.com
-  PUBLIC_URL: https://yourshard0domain.com
-  XMPP_BOSH_URL_BASE: http://yourshard0domain.com:5280
-  DOCKER_HOST_ADDRESS: yourshard0domain.com
-  JICOFO_COMPONENT_SECRET: yoursecret-base64
-  JVB_AUTH_PASSWORD: yoursecret-base64
-  JICOFO_AUTH_PASSWORD: yoursecret-base64
-  JWT_APP_ID: your_App_id
-  JWT_APP_SECRET: yoursecret
+  TZ: America/Los_Angeles << update this >>
+  XMPP_SERVER: yourshard0domain.com << update this >>
+  PUBLIC_URL: https://yourshard0domain.com << update this >>
+  XMPP_BOSH_URL_BASE: http://yourshard0domain.com:5280 << update this >>
+  DOCKER_HOST_ADDRESS: yourshard0domain.com << update this >>
+  JICOFO_COMPONENT_SECRET: yoursecret-base64 << update this >>
+  JVB_AUTH_PASSWORD: yoursecret-base64 << update this >>
+  JICOFO_AUTH_PASSWORD: yoursecret-base64 << update this >>
+  JWT_APP_ID: your_App_id << update this >>
+  JWT_APP_SECRET: yoursecret << update this >>
   JWT_ACCEPTED_ISSUERS: my_web_client,my_app_client
