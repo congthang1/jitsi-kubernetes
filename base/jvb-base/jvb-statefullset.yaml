@@ -61,6 +61,8 @@ spec:
               value: focus
             - name: JVB_TCP_HARVESTER_DISABLED
               value: "true"
+            - name: JVB_TCP_PORT
+              value: "4443"
             - name: JVB_AUTH_USER
               value: jvb
             - name: JVB_ENABLE_APIS

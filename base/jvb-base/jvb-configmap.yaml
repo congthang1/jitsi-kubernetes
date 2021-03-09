@@ -42,7 +42,7 @@ data:
     org.jitsi.videobridge.rest.jetty.port=9090
     org.jitsi.videobridge.rest.COLIBRI_WS_DOMAIN={{ $WS_DOMAIN }}
     org.jitsi.videobridge.rest.COLIBRI_WS_TLS=true
-    org.jitsi.videobridge.rest.COLIBRI_WS_SERVER_ID={{ $WS_SERVER_ID }}
+    org.jitsi.videobridge.rest.COLIBRI_WS_SERVER_ID={{ .Env.WS_SERVER_ID }}
 
     org.jitsi.videobridge.rest.private.jetty.host=0.0.0.0
     org.jitsi.videobridge.octo.BIND_ADDRESS=0.0.0.0
@@ -65,7 +65,7 @@ data:
     #if [[ ! -f /config/sip-communicator.properties ]]; then
 
         echo "SETTING JVB_PORT..."
-
+        cp /defaults/sip-communicator.properties /config/default-sip-communicator.properties
         echo "HOST NAME:" "$HOSTNAME"
         IFS='-' read -ra ADDR <<< "$HOSTNAME"
         let jvb_port=$((31000+${ADDR[1]}))
@@ -75,17 +75,17 @@ data:
         export JVB_PORT="$jvb_port"
         export JVB_PUBLIC_IP=`(curl ifconfig.me)`
         
-        sed -i  "s/MUC_NICKNAME={{ .Env.HOSTNAME }}/MUC_NICKNAME=$OCTO_REGION-$HOSTNAME/" /defaults/sip-communicator.properties
-        sed -i  "s/NAT_HARVESTER_LOCAL_ADDRESS={{ .Env.LOCAL_ADDRESS }}/NAT_HARVESTER_LOCAL_ADDRESS=$JVB_PUBLIC_IP/" /defaults/sip-communicator.properties
-        sed -i  "s/COLIBRI_WS_SERVER_ID={{ \$WS_SERVER_ID }}/COLIBRI_WS_SERVER_ID=$JVB_PUBLIC_IP:$jetty_port/" /defaults/sip-communicator.properties
-        sed -i  "s/org.jitsi.videobridge.rest.jetty.port=9090/org.jitsi.videobridge.rest.jetty.port=$jetty_port/" /defaults/sip-communicator.properties
+        sed -i  "s/MUC_NICKNAME={{ .Env.HOSTNAME }}/MUC_NICKNAME=$OCTO_REGION-$HOSTNAME/" /config/default-sip-communicator.properties
+        sed -i  "s/NAT_HARVESTER_LOCAL_ADDRESS={{ .Env.LOCAL_ADDRESS }}/NAT_HARVESTER_LOCAL_ADDRESS=$JVB_PUBLIC_IP/" /config/default-sip-communicator.properties
+        sed -i  "s/COLIBRI_WS_SERVER_ID={{ .Env.WS_SERVER_ID }}/COLIBRI_WS_SERVER_ID=$JVB_PUBLIC_IP:$jetty_port/" /config/default-sip-communicator.properties
+        sed -i  "s/org.jitsi.videobridge.rest.jetty.port=9090/org.jitsi.videobridge.rest.jetty.port=$jetty_port/" /config/default-sip-communicator.properties
         
         echo $JVB_PORT
         echo "========JVB_PORT:""$JVB_PORT""=================="
-        echo "org.jitsi.videobridge.octo.PUBLIC_ADDRESS=$JVB_PUBLIC_IP" >> /defaults/sip-communicator.properties
-        echo "org.jitsi.videobridge.octo.BIND_PORT=$OCTO_PULIC_BIND_PORT" >> /defaults/sip-communicator.properties
+        echo "org.jitsi.videobridge.octo.PUBLIC_ADDRESS=$JVB_PUBLIC_IP" >> /config/default-sip-communicator.properties
+        echo "org.jitsi.videobridge.octo.BIND_PORT=$OCTO_PULIC_BIND_PORT" >> /config/default-sip-communicator.properties
 
-        tpl /defaults/sip-communicator.properties > /config/sip-communicator.properties
+        tpl /config/default-sip-communicator.properties > /config/sip-communicator.properties
     #fi
 
     if [[ ! -f /config/logging.properties ]]; then
