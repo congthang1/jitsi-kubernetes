@@ -2,8 +2,8 @@
 
 Kubernete deployment with autoscale JVB and OCTO enabled
 Kubernetes 1.18.10
+Tested on Digital Ocean.
 
-There are 4 parts of this deploy, each will be on a kuberenetes. Meaning you need 4 kubernetes for 2 regions or 2 kubernetes for only 1 region. The autoscale will not work if you put jvb on the same Web Prosody kubernetes.
 JVB nodes need at least 2 cpu
 
 0. Search for all place in the code marked as: ``<< update this >> `` and update them! 
