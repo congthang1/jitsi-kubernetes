@@ -2,6 +2,7 @@
 
 Kubernete deployment with autoscale JVB and OCTO enabled
 Kubernetes 1.18.10
+
 Tested on Digital Ocean.
 
 JVB nodes need at least 2 cpu
