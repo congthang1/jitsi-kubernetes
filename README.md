@@ -1,5 +1,7 @@
 # jitsi kubernetes scalable service multi shards with OCTO
 
+For Bigbluebutton k8s scale, checkout this repo https://github.com/congthang1/bigbluebutton-kubernetes-autoscale
+
 Kubernete deployment with autoscale JVB and OCTO enabled
 Kubernetes 1.18.10
 
